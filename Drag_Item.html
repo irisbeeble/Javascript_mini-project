@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta charset="utf-8">
+
+  <title>Drag</title>
+  
+
+
+
+<style type="text/css">
+.box{
+	width:300px;
+	height:400px;
+	border:1px solid black;
+	margin:5px;
+	float: left;
+}
+.item{
+	width:50px;
+	height:50px;
+	background-color:red;
+	margin:0px;
+	display:inline-block;
+
+}
+
+
+
+</style>
+
+</head>
+<body>
+
+<div class="box">
+	<div class="item">1</div>
+	<div class="item">2</div>
+
+
+</div>
+<div class="box">
+	<div class="item">3</div>
+</div>
+ 
+
+
+<script type="text/javascript">
+
+window.onload=function(){
+	var items=document.getElementsByClassName("item");
+	for(var i=0;i<items.length;i++){
+		items[i].addEventListener("mousedown", dragItem);
+	}
+
+
+};
+
+function dragItem(e){
+	e.preventDefault();
+	//console.log("drag");
+	var elem=e.currentTarget;//觸發這個事件的標簽
+		elem.style.position="relative";
+		elem.style.left="0px";
+		elem.style.top="0px";
+	//elem.style.position="absolute";
+	//elem.style.left=elem.offsetLeft+"px";//記錄方塊的位置初始值
+	//elem.style.top=elem.offsetTop+"px";//記錄方塊的位置初始值
+	var elemStart={x:elem.offsetLeft, y:elem.offsetTop};
+	var cursorStart={x:e.clientX, y:e.clientY};//滑鼠初次點擊位置
+
+
+
+	var move=function(e){
+		e.preventDefault();
+		var differX=e.clientX-cursorStart.x;//滑鼠的x坐標差
+		var differY=e.clientY-cursorStart.y;//滑鼠的y坐標差
+		//方塊的位置=開頭位置＋座標差
+		elem.style.left=(elemStart.x+differX)+"px";
+		elem.style.top=(elemStart.y+differY)+"px";
+
+
+	};
+
+	var end=function(e){
+		e.preventDefault();
+		var targetBox=getTargetBox(e.clientX, e.clientY);
+		if(targetBox!=null){//方塊在box範圍內被拖曳
+			targetBox.appendChild(elem);// return boxes[i]; bo.item[i]
+		}
+
+		elem.style.position="static";
+		elem.style.left="auto";
+		elem.style.top="auto";
+
+	
+
+
+		document.removeEventListener("mousemove", move);
+		document.removeEventListener("mouseup", end);
+
+
+	};
+
+	document.addEventListener("mousemove", move);
+	document.addEventListener("mouseup", end);
+
+}
+
+
+	function getTargetBox(x, y){// 方塊在div裡的條件
+		var boxes=document.getElementsByClassName('box');
+		var box;
+		for (var i=0;i<boxes.length;i++){
+			box=boxes[i];
+			if(x>box.offsetLeft&&x<box.offsetLeft+box.offsetWidth
+				&&y>box.offsetTop&&y<box.offsetTop+box.offsetHeight){
+				 return box;
+			}
+		}
+		return null;//Box內部是空的
+
+	};
+</script>
+</body>
+</html>
+
